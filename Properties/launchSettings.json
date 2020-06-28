@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SimulatedSensor": {
+      "commandName": "Project",
+      "commandLineArgs": "--id testId --sensors test1:12:24:100"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
