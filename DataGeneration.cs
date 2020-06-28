@@ -1,22 +1,24 @@
-﻿using System;
+﻿using InfluxDB.Client;
+using InfluxDB.Client.Writes;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SimulatedSensor
 {
   public static class DataGeneration
   {
-    public static async Task GenerateSensorData(Sensor sensor, string connectionString)
+    public static async Task GenerateSensorData(Sensor sensor, InfluxDBClient client)
     {
       var range = sensor.Max - sensor.Min;
       var random = new Random();
       var currentValue = (random.NextDouble() * range) + sensor.Min;
       var modifier = Math.Abs(range / 100.0);
+      using var writeApi = client.GetWriteApi();
+      var dataCache = new List<PointData>();
 
-      List<string> linesToWrite = new List<string>();
+      Console.WriteLine($"Simulating sensor {sensor.Name} for device {Program.DeviceID} at an interval of {sensor.Interval}ms");
+      
       while (true)
       {
         currentValue += modifier * Math.Max(random.NextDouble(), 0.6);
@@ -24,13 +26,17 @@ namespace SimulatedSensor
         {
           modifier *= -1;
         }
-        linesToWrite.Add($"{DateTimeOffset.UtcNow:o};{currentValue}");
-        if (linesToWrite.Count > 10)
+        dataCache.Add(PointData
+          .Measurement("simulatedValues")
+          .Tag("deviceId", Program.DeviceID)
+          .Field(sensor.Name, currentValue));
+
+        if (dataCache.Count > 50)
         {
-          File.AppendAllLines($"{sensor.Name}.csv", linesToWrite);
-          linesToWrite.Clear();
+          writeApi.WritePoints(Program.ServerBucket, Program.ServerOrg, dataCache);
+          dataCache.Clear();
         }
-        Console.WriteLine($"Name: {sensor.Name} - Value: {currentValue}");
+
         await Task.Delay(sensor.Interval);
       }
     }
