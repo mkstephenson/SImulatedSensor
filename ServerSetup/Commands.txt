@@ -1,6 +1,4 @@
-﻿helm install test-prometheus stable/prometheus --set rbac.create=false --set alertmanager.enabled=false --set nodeExporter.enabled=false --set server.service.type="NodePort" --set server.service.nodePort=32501
-
--- Grafana --
+﻿-- Grafana --
 helm install test-grafana stable/grafana --set service.nodePort=32502 --set service.type=NodePort
 Username: admin
 Password: 1kn9sxUoCfKqLfCjlDhN57DYxSmSDAGETXqfRHys

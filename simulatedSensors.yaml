@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: simulated-sensors
 spec:
-  replicas: 10
+  replicas: 50
   selector:
     matchLabels:
       app: simulated-sensors
@@ -25,8 +25,8 @@ spec:
           imagePullPolicy: Never
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "100m"
+              memory: "16Mi"
+              cpu: "5m"
             limits:
               memory: "128Mi"
               cpu: "500m"
