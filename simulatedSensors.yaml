@@ -1,1 +1,37 @@
-﻿
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simulated-sensors
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: simulated-sensors
+  template:
+    metadata:
+      labels:
+        app: simulated-sensors
+    spec:
+      containers:
+        - name: simulated-sensors
+          image: simulated-sensor:latest
+          args:
+            - "--id=env"
+            - "--sensors=temperatureChassis1:12:24:100;temperatureChassis2:12:24:100;temperatureFrame1:20:40:100;temperatureFrame2:20:40:100"
+            - "--serverUrl=http://test-influx-influxdb2"
+            - "--serverToken=wohnEdXbADlc10FsBQRpZ_bXTqsMuonLjTH9Gn_6g9axZrg02qd4ngYOYE6PWKFHyL1ZNfOUF7e1m1iHrm_34A=="
+            - "--serverOrg=05ea4492bb3e0000"
+            - "--serverBucket=testSensorData"
+          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: SIMDEV_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

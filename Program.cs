@@ -1,4 +1,5 @@
 ﻿using InfluxDB.Client;
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -17,12 +18,12 @@ namespace SimulatedSensor
     {
       var rootCommand = new RootCommand
       {
-         new Option<string>("--id", "The ID of the simulated device"),
-         new Option<SensorsContainer>("--sensors", "A sensor to emulate: Format of value is name1:min1:max1:interval1;name2:min2:max2:interval2. Name is a string, min/max are doubles and interval is an integer in ms. Sensors are separated by ';,' values are separated by ':'"),
-         new Option<string>("--serverUrl", "The URL of the server"),
-         new Option<string>("--serverToken", "The token for the server"),
-         new Option<string>("--serverBucket", "The bucket on the server"),
-         new Option<string>("--serverOrg", "The organisation on the server")
+         new Option<string>("--id", "The ID of the simulated device") { Required = true },
+         new Option<SensorsContainer>("--sensors", "A sensor to emulate: Format of value is name1:min1:max1:interval1;name2:min2:max2:interval2. Name is a string, min/max are doubles and interval is an integer in ms. Sensors are separated by ';,' values are separated by ':'")  { Required = true },
+         new Option<string>("--serverUrl", "The URL of the server") { Required = true },
+         new Option<string>("--serverToken", "The token for the server") { Required = true },
+         new Option<string>("--serverBucket", "The bucket on the server") { Required = true },
+         new Option<string>("--serverOrg", "The organisation on the server") { Required = true }
       };
 
       rootCommand.Handler = CommandHandler.Create<string, SensorsContainer, string, string, string, string>(RunSensorSimulation);
@@ -32,9 +33,16 @@ namespace SimulatedSensor
 
     public static void RunSensorSimulation(string id, SensorsContainer sensors, string serverUrl, string serverToken, string serverBucket, string serverOrg)
     {
-      Program.DeviceID = id;
-      Program.ServerBucket = serverBucket;
-      Program.ServerOrg = serverOrg;
+      if (id == "env")
+      {
+        DeviceID = Environment.GetEnvironmentVariable("SIMDEV_POD_NAME");
+      }
+      else
+      {
+        DeviceID = id;
+      }
+      ServerBucket = serverBucket;
+      ServerOrg = serverOrg;
 
       using var influxDBClient = InfluxDBClientFactory.Create(serverUrl, serverToken.ToCharArray());
       influxDBClient.DisableGzip();

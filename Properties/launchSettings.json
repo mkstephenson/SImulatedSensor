@@ -2,7 +2,10 @@
   "profiles": {
     "SimulatedSensor": {
       "commandName": "Project",
-      "commandLineArgs": "--id testId --sensors temperatureChassis1:12:24:100;temperatureChassis2:12:24:100;temperatureFrame1:20:40:100;temperatureFrame2:20:40:100 --serverUrl=http://localhost:32501 --serverToken=wohnEdXbADlc10FsBQRpZ_bXTqsMuonLjTH9Gn_6g9axZrg02qd4ngYOYE6PWKFHyL1ZNfOUF7e1m1iHrm_34A== --serverOrg=05ea4492bb3e0000 --serverBucket=testSensorData"
+      "commandLineArgs": "--id env --sensors temperatureChassis1:12:24:100;temperatureChassis2:12:24:100;temperatureFrame1:20:40:100;temperatureFrame2:20:40:100 --serverUrl=http://localhost:32501 --serverToken=wohnEdXbADlc10FsBQRpZ_bXTqsMuonLjTH9Gn_6g9axZrg02qd4ngYOYE6PWKFHyL1ZNfOUF7e1m1iHrm_34A== --serverOrg=05ea4492bb3e0000 --serverBucket=testSensorData",
+      "environmentVariables": {
+        "SIMDEV_POD_NAME": "Device1"
+      }
     },
     "Docker": {
       "commandName": "Docker"
